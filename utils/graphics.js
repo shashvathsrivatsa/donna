@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const fontResource = loadFontResource('SF-Pro-Display-Medium.otf');
+const fontResource = loadFontResource('SF-Pro-Display-Medium.woff2');
 
 
 

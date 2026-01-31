@@ -38,7 +38,7 @@ async function calendar_render() {
             const x = start_x + step_x * (i % 7);
             const y = start_y + step_y * Math.floor(i / 7);
             const color = (i === dayOfWeek) ? '#FFF' : '#000';
-            const fontWeight = (i === dayOfWeek) ? 700 : 563;
+            const fontWeight = (i === dayOfWeek) ? 700 : 567;
 
             //  Overlay red circle for today
             if (i === dayOfWeek) {
@@ -138,15 +138,15 @@ async function calendar_render() {
 
         return await baseImage
             .composite([{ input: Buffer.from(finalSvg), top: 0, left: 0 }])
-            // .toFile('output.png');
-            .toBuffer();
+            .toFile('output.png');
+            // .toBuffer();
 
     } catch (error) {
         console.error('Error generating image:', error);
     }
 }
 
-// calendar_render();
+calendar_render();
 
 
 

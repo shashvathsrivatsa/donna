@@ -1,7 +1,9 @@
 const fs = require('fs');
 const path = require('path');
 
-const fontResource = loadFontResource('SF-Pro-Display-Medium.woff2');
+const fontResource = loadFontResource('SF-Pro.ttf');
+
+
 
 function buildFinalSVG(svgInnerContent) {
     return `
@@ -9,23 +11,20 @@ function buildFinalSVG(svgInnerContent) {
             <defs>
                 <style>
                     @font-face {
-                        /* 1. Use a UNIQUE name to avoid conflict with system fonts */
                         font-family: '${fontResource.fontFamily}';
-                        
-                        /* 2. REMOVED ';charset=utf-8' - it corrupts binary fonts */
-                        src: url(data:${fontResource.mimeType};base64,${fontResource.fontBase64}) format('${fontResource.fontFormat}');
-                        
-                        /* 3. Match this to the specific file weight if possible (Medium = 500), 
-                           but keeping a range is safer for fallback */
+                        src: url(data:${fontResource.mimeType};charset=utf-8;base64,${fontResource.fontBase64}) format('${fontResource.fontFormat}');
                         font-weight: 100 900; 
                         font-style: normal;
+                        font-display: block;
                     }
                 </style>
             </defs>
             ${svgInnerContent}
         </svg>
-        `;
+    `;
 }
+
+
 
 function overlayText(text, x, y, fontSize, fontWeight, color, alignment='middle') {
     return `
@@ -39,11 +38,15 @@ function overlayText(text, x, y, fontSize, fontWeight, color, alignment='middle'
             ${text}
         </text>\n
         `;
+
+
 }
+
 
 function overlayCircle(x, y) {
     return `<circle cx="${x}" cy="${y}" r="60" fill="#FF383C" />\n`;
 }
+
 
 function overlayRectangle(x, y, length, width, bgColor) {
     const borderRadius = 12;
@@ -61,40 +64,35 @@ function overlayRectangle(x, y, length, width, bgColor) {
 
 
 
+
+
+
+
+
 function loadFontResource(fontFilename) {
-    const fontPath = path.join(__dirname, '../public/fonts', fontFilename);
-
-    if (!fs.existsSync(fontPath)) {
-        console.error(`Font file not found at: ${fontPath}`);
-        throw new Error(`Font file not found: ${fontFilename}`);
-    }
-
+    const fontPath = path.join(__dirname, '../fonts', fontFilename);
     const fontBuffer = fs.readFileSync(fontPath);
-
-    // 3.2MB is large for a single font, ensure this isn't a font collection
-    console.log(`[DEBUG] Loaded font: ${fontFilename} | Size: ${fontBuffer.length} bytes`);
 
     const fontBase64 = fontBuffer.toString('base64');
 
     const fontExt = path.extname(fontPath).toLowerCase();
-    
-    // STRICT MIME TYPES for maximum compatibility
     const mimeTypes = {
         '.woff': 'font/woff',
         '.woff2': 'font/woff2',
-        '.ttf': 'font/truetype', // Changed from font/ttf
-        '.otf': 'font/opentype'  // Changed from font/otf
+        '.ttf': 'font/ttf',
+        '.otf': 'font/otf'
     };
     const mimeType = mimeTypes[fontExt] || 'font/woff2';
 
     return {
         fontBase64,
         mimeType,
-        fontFormat: fontExt.slice(1), // 'woff2', 'ttf', etc.
-        // RENAME THIS to avoid system conflict
-        fontFamily: 'EmbeddedSFPro'
+        fontFormat: fontExt.slice(1),
+        fontFamily: 'SF Pro Display'
     };
 }
+
+
 
 module.exports = {
     buildFinalSVG,

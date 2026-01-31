@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
 
-const { buildFinalSVG, overlayText, overlayCircle, overlayRectangle } = require('../../utils/graphics.js');
+const { overlayText, overlayCircle, overlayRectangle, buildFinalSVG } = require('../../utils/graphics.js');
 const { getTextWidth, splitTextIntoLines, getCalendarEvents } = require('./calendar_render_helper.js');
 
 

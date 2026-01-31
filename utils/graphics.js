@@ -1,28 +1,6 @@
 const fs = require('fs');
 const path = require('path');
 
-const fontResource = loadFontResource('SF-Pro.ttf');
-
-
-
-function buildFinalSVG(svgInnerContent) {
-    return `
-        <svg width="1206" height="2622" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <style>
-                    @font-face {
-                        font-family: '${fontResource.fontFamily}';
-                        src: url(data:${fontResource.mimeType};charset=utf-8;base64,${fontResource.fontBase64}) format('${fontResource.fontFormat}');
-                        font-weight: 100 900; 
-                        font-style: normal;
-                        font-display: block;
-                    }
-                </style>
-            </defs>
-            ${svgInnerContent}
-        </svg>
-    `;
-}
 
 
 
@@ -30,7 +8,7 @@ function overlayText(text, x, y, fontSize, fontWeight, color, alignment='middle'
     return `
         <text x="${x}" y="${y}" 
             fill="${color}" 
-            font-family="${fontResource.fontFamily}" 
+            font-family="SF Pro" 
             font-weight="${fontWeight}" 
             font-size="${fontSize}"
             text-anchor="${alignment}" 
@@ -64,39 +42,30 @@ function overlayRectangle(x, y, length, width, bgColor) {
 
 
 
-
-
-
-
-
-function loadFontResource(fontFilename) {
-    const fontPath = path.join(__dirname, '../fonts', fontFilename);
-    const fontBuffer = fs.readFileSync(fontPath);
-
-    const fontBase64 = fontBuffer.toString('base64');
-
-    const fontExt = path.extname(fontPath).toLowerCase();
-    const mimeTypes = {
-        '.woff': 'font/woff',
-        '.woff2': 'font/woff2',
-        '.ttf': 'font/ttf',
-        '.otf': 'font/otf'
-    };
-    const mimeType = mimeTypes[fontExt] || 'font/woff2';
-
-    return {
-        fontBase64,
-        mimeType,
-        fontFormat: fontExt.slice(1),
-        fontFamily: 'SF Pro Display'
-    };
+function buildFinalSVG(svgInnerContent) {
+    return `
+        <svg width="1206" height="2622" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <style>
+                    @font-face {
+                        font-family: 'SF Pro';
+                        font-weight: 100 900; 
+                        font-style: normal;
+                        font-display: block;
+                    }
+                </style>
+            </defs>
+            ${svgInnerContent}
+        </svg>
+    `;
 }
 
 
 
+
 module.exports = {
-    buildFinalSVG,
     overlayText,
     overlayCircle,
-    overlayRectangle
+    overlayRectangle,
+    buildFinalSVG
 };

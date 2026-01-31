@@ -12,7 +12,7 @@ function buildFinalSVG(svgInnerContent) {
                 <style>
                     @font-face {
                         font-family: '${fontResource.fontFamily}';
-                        src: url(data:${fontResource.mimeType};charset=utf-8;base64,${fontResource.fontBase64}) format('${fontResource.fontFormat}');
+                        src: url(data:${fontResource.mimeType};base64,${fontResource.fontBase64}) format('${fontResource.fontFormat}');
                         font-weight: 100 900; 
                         font-style: normal;
                     }
@@ -86,12 +86,12 @@ function loadFontResource(fontFilename) {
 
     const fontExt = path.extname(fontPath).toLowerCase();
     const mimeTypes = {
-        '.woff': 'font/woff',
-        '.woff2': 'font/woff2',
-        '.ttf': 'font/ttf',
-        '.otf': 'font/otf'
+        '.woff': 'woff',
+        '.woff2': 'woff2',
+        '.ttf': 'trutype',
+        '.otf': 'opentype'
     };
-    const mimeType = mimeTypes[fontExt] || 'font/woff2';
+    const mimeType = mimeTypes[fontExt] || 'woff2';
 
     return {
         fontBase64,

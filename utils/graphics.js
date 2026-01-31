@@ -70,6 +70,16 @@ function overlayRectangle(x, y, length, width, bgColor) {
 
 function loadFontResource(fontFilename) {
     const fontPath = path.join(__dirname, '../fonts', fontFilename);
+
+    // Add error checking
+    if (!fs.existsSync(fontPath)) {
+        console.error(`Font file not found at: ${fontPath}`);
+        console.error(`Current directory: ${__dirname}`);
+        throw new Error(`Font file not found: ${fontFilename}`);
+    } else {
+        console.log(`Font file found at: ${fontPath}`);
+    }
+
     const fontBuffer = fs.readFileSync(fontPath);
 
     const fontBase64 = fontBuffer.toString('base64');

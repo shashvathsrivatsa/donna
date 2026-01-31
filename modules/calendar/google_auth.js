@@ -5,7 +5,7 @@ const { google } = require('googleapis');
 require('dotenv').config({ quiet: true });
 
 const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
-const TOKEN_PATH = 'token.json';
+const TOKEN_PATH = './token.json';
 
 
 

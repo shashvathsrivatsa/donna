@@ -16,10 +16,14 @@ async function getAuthClient() {
         process.env.GOOGLE_REDIRECT_URI
     );
 
-    if (fs.existsSync(TOKEN_PATH)) {
-        oAuth2Client.setCredentials(JSON.parse(fs.readFileSync(TOKEN_PATH)));
-        return oAuth2Client;
-    }
+    oAuth2Client.setCredentials({
+        refresh_token: process.env.GOOGLE_REFRESH_TOKEN
+    });
+
+    // if (fs.existsSync(TOKEN_PATH)) {
+        // oAuth2Client.setCredentials(JSON.parse(fs.readFileSync(TOKEN_PATH)));
+    //     return oAuth2Client;
+    // }
 
     const authUrl = oAuth2Client.generateAuthUrl({
         access_type: 'offline',

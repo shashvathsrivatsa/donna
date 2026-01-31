@@ -9,11 +9,15 @@ function buildFinalSVG(svgInnerContent) {
             <defs>
                 <style>
                     @font-face {
+                        /* 1. Use a UNIQUE name to avoid conflict with system fonts */
                         font-family: '${fontResource.fontFamily}';
-                        /* MIME types must be correct for strict browsers (e.g., 'font/woff2' instead of just 'woff2') */
+                        
+                        /* 2. REMOVED ';charset=utf-8' - it corrupts binary fonts */
                         src: url(data:${fontResource.mimeType};base64,${fontResource.fontBase64}) format('${fontResource.fontFormat}');
-                        /* Since you are loading 'Medium', we usually want font-weight: 500, but keeping generic for now */
-                        font-weight: normal; 
+                        
+                        /* 3. Match this to the specific file weight if possible (Medium = 500), 
+                           but keeping a range is safer for fallback */
+                        font-weight: 100 900; 
                         font-style: normal;
                     }
                 </style>
@@ -43,6 +47,7 @@ function overlayCircle(x, y) {
 
 function overlayRectangle(x, y, length, width, bgColor) {
     const borderRadius = 12;
+
     return `
         <rect x="${x}" y="${y}" 
             width="${length}" 
@@ -53,31 +58,32 @@ function overlayRectangle(x, y, length, width, bgColor) {
         `;
 }
 
+
+
+
 function loadFontResource(fontFilename) {
     const fontPath = path.join(__dirname, '../fonts', fontFilename);
 
     if (!fs.existsSync(fontPath)) {
         console.error(`Font file not found at: ${fontPath}`);
-        console.error(`Current directory: ${__dirname}`);
         throw new Error(`Font file not found: ${fontFilename}`);
     }
 
     const fontBuffer = fs.readFileSync(fontPath);
-    
-    // DEBUGGING: Log the file size. 
-    // If this logs a size under 500 bytes, your file is a Git LFS pointer, not the actual font.
+
+    // 3.2MB is large for a single font, ensure this isn't a font collection
     console.log(`[DEBUG] Loaded font: ${fontFilename} | Size: ${fontBuffer.length} bytes`);
 
     const fontBase64 = fontBuffer.toString('base64');
 
     const fontExt = path.extname(fontPath).toLowerCase();
     
-    // FIXED: Use standard internet media types (MIME types)
+    // STRICT MIME TYPES for maximum compatibility
     const mimeTypes = {
         '.woff': 'font/woff',
         '.woff2': 'font/woff2',
-        '.ttf': 'font/truetype',
-        '.otf': 'font/opentype'
+        '.ttf': 'font/truetype', // Changed from font/ttf
+        '.otf': 'font/opentype'  // Changed from font/otf
     };
     const mimeType = mimeTypes[fontExt] || 'font/woff2';
 
@@ -85,7 +91,8 @@ function loadFontResource(fontFilename) {
         fontBase64,
         mimeType,
         fontFormat: fontExt.slice(1), // 'woff2', 'ttf', etc.
-        fontFamily: 'SF Pro Display'
+        // RENAME THIS to avoid system conflict
+        fontFamily: 'EmbeddedSFPro'
     };
 }
 

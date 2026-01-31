@@ -1,0 +1,12 @@
+{
+  "ignore": [
+    "node_modules/*",
+    "dist/*",
+    "build/*",
+    "logs/*",
+    "*.log",
+    "test/*"
+  ],
+  "ext": "js,ts,json"
+}
+

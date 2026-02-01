@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 
-const font = "SF Pro Normal";
+const font = "SF Pro";
 
 
 function overlayText(text, x, y, fontSize, fontWeight, color, alignment='middle') {

@@ -139,15 +139,15 @@ async function calendar_render() {
 
         return await baseImage
             .composite([{ input: Buffer.from(finalSvg), top: 0, left: 0 }])
-            .toFile('output.png');
-            // .toBuffer();
+            // .toFile('output.png');
+            .toBuffer();
 
     } catch (error) {
         console.error('Error generating image:', error);
     }
 }
 
-calendar_render();
+// calendar_render();
 
 
 

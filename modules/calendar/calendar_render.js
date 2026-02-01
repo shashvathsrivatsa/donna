@@ -9,7 +9,7 @@ const { getTextWidth, splitTextIntoLines, getCalendarEvents } = require('./calen
 async function calendar_render() {
     try {
         //  Load font resource
-        const baseImage = sharp('assets/calendar/skeleton.png');
+        const baseImage = sharp('assets/calendar/skeleton-dark.png');
 
 
         //  Calculate date texts
@@ -37,8 +37,9 @@ async function calendar_render() {
         for (let i = 0; i < dateNumbers.length; i++) {
             const x = start_x + step_x * (i % 7);
             const y = start_y + step_y * Math.floor(i / 7);
-            const color = (i === dayOfWeek) ? '#FFF' : ((i % 7 === 0 || i % 7 === 6) ? '#8A8A8D' : '#000000');
-            const fontWeight = (i === dayOfWeek) ? 700 : 567;
+            // const color = (i === dayOfWeek) ? '#FFF' : ((i % 7 === 0 || i % 7 === 6) ? '#8A8A8D' : '#000000');
+            const color = (i === dayOfWeek) ? '#FFF' : ((i % 7 === 0 || i % 7 === 6) ? '#8D8D92' : '#FFFFFF');
+            const fontWeight = (i === dayOfWeek) ? 700 : 563;
 
             //  Overlay red circle for today
             if (i === dayOfWeek) {
@@ -138,15 +139,15 @@ async function calendar_render() {
 
         return await baseImage
             .composite([{ input: Buffer.from(finalSvg), top: 0, left: 0 }])
-            // .toFile('output.png');
-            .toBuffer();
+            .toFile('output.png');
+            // .toBuffer();
 
     } catch (error) {
         console.error('Error generating image:', error);
     }
 }
 
-// calendar_render();
+calendar_render();
 
 
 

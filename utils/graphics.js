@@ -2,13 +2,14 @@ const fs = require('fs');
 const path = require('path');
 
 
+const font = "SF Pro Normal";
 
 
 function overlayText(text, x, y, fontSize, fontWeight, color, alignment='middle') {
     return `
         <text x="${x}" y="${y}" 
             fill="${color}" 
-            font-family="SF Pro" 
+            font-family="${font}" 
             font-weight="${fontWeight}" 
             font-size="${fontSize}"
             text-anchor="${alignment}" 
@@ -45,20 +46,20 @@ function overlayRectangle(x, y, length, width, bgColor) {
 function buildFinalSVG(svgInnerContent) {
     return `
         <svg width="1206" height="2622" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <style>
-                    @font-face {
-                        font-family: 'SF Pro';
-                        font-weight: 100 900; 
-                        font-style: normal;
-                        font-display: block;
-                    }
-                </style>
-            </defs>
             ${svgInnerContent}
         </svg>
     `;
 }
+            // <defs>
+            //     <style>
+            //         @font-face {
+            //             font-family="${font}"; 
+            //             font-weight: 100 900; 
+            //             font-style: normal;
+            //             font-display: block;
+            //         }
+            //     </style>
+            // </defs>
 
 
 

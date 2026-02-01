@@ -143,6 +143,17 @@ async function getCalendarEvents(startDate) {
         usHolidays: { background: "#C5EAFD", titleText: "#0D577C", timeText: "#1A82BF" },
     }
 
+    const dark_colors_map = {
+        primary: { background: "#2F2740", titleText: "#B99AFE", timeText: "#947BCC" },
+        noSchool: { background: "#393A3A", titleText: "#E4E8E7", timeText: "#B6BAB8" },
+        tests: { background: "#460E06", titleText: "#FF401C", timeText: "#E23314" },
+        school: { background: "#3F3600", titleText: "#FED800", timeText: "#CBAD03" },
+        personal: { background: "#253730", titleText: "#92E0C0", timeText: "#74B49A" },
+        projects: { background: "#3E1D00", titleText: "#FB7500", timeText: "#C85D00" },
+        misc: { background: "#3E0F34", titleText: "#FC38D1", timeText: "#CA2DA7" },
+        usHolidays: { background: "#062B3E", titleText: "#1BADF7", timeText: "#FFFFFF" },
+    }
+
     events = events.map(event => {
         const allDay = !!event.start.date;
 
@@ -166,7 +177,7 @@ async function getCalendarEvents(startDate) {
 
         return {
             title: event.summary,
-            color: light_colors_map[Object.keys(calendars).find(key => calendars[key] === event.organizer.email)],
+            color: dark_colors_map[Object.keys(calendars).find(key => calendars[key] === event.organizer.email)],
             daysFromToday: diffDays,
             allDay: allDay,
             start: startText,

@@ -59,8 +59,6 @@ app.post('/chat', async (req, res) => {
 //  TTS
 app.post('/tts', async (req, res) => {
     try {
-        return res.status(400).json({ error: "Cooling server" });
-
         const text = req.body.text;
         const client = new InferenceClient(process.env.HF_TOKEN);
 

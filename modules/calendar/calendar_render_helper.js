@@ -120,8 +120,6 @@ async function getCalendarEvents(startDate = new Date()) {
     //  Calculate time range
     const lastSunday = startDate;
     lastSunday.setDate(lastSunday.getDate() - lastSunday.getDay());
-    console.log(lastSunday);
-    console.log("");
 
     const twoWeeksLater = new Date();
     twoWeeksLater.setDate(lastSunday.getDate() + 14);
@@ -152,17 +150,13 @@ async function getCalendarEvents(startDate = new Date()) {
 
     //  Format & return
     events = events.map(event => {
-        console.log(event.summary);
-        console.log(event.start.dateTime || event.start.date);
         const allDay = !!event.start.date;
 
         let startDate = new Date(event.start.dateTime || event.start.date);
         if (allDay) startDate = new Date(startDate.getTime() + (5 * 60 * 60 * 1000));
-        console.log(startDate);
 
         const diffTime = startDate.getTime() - lastSunday.getTime();
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        console.log(diffDays);
 
         //  Calculate start text - either "3 PM" or "3:30 PM" (if minute is 00, omit minutes)
         const startText = event.start.dateTime ? (() => {
@@ -176,7 +170,6 @@ async function getCalendarEvents(startDate = new Date()) {
             return minutes === 0 ? `${hours} ${ampm}` : `${hours}:${minutesStr} ${ampm}`;
         })() : null;
 
-        console.log("");
         return {
             title: event.summary,
             color: dark_colors_map[Object.keys(calendars).find(key => calendars[key] === event.organizer.email)],

@@ -1,6 +1,28 @@
 const { google } = require('googleapis');
 const { getAuthClient } = require('./google_auth');
 
+const light_colors_map = {
+    primary: { background: "#EEE5FF", titleText: "#5D4C7F", timeText: "#8A74BF" },
+    noSchool: { background: "#F8F9FA", titleText: "#737474", timeText: "#AAAFAE" },
+    tests: { background: "#FFC8BF", titleText: "#801400", timeText: "#BE1C00" },
+    school: { background: "#FEF5BE", titleText: "#7F6D00", timeText: "#BEA200" },
+    personal: { background: "#E4F6EE", titleText: "#487061", timeText: "#6CA990" },
+    projects: { background: "#FDDBBF", titleText: "#7D3A00", timeText: "#BB5702" },
+    misc: { background: "#FECDF3", titleText: "#7F1C68", timeText: "#BD2A9D" },
+    usHolidays: { background: "#C5EAFD", titleText: "#0D577C", timeText: "#1A82BF" },
+}
+
+const dark_colors_map = {
+    primary: { background: "#2F2740", titleText: "#B99AFE", timeText: "#947BCC" },
+    noSchool: { background: "#393A3A", titleText: "#E4E8E7", timeText: "#B6BAB8" },
+    tests: { background: "#460E06", titleText: "#FF401C", timeText: "#E23314" },
+    school: { background: "#3F3600", titleText: "#FED800", timeText: "#CBAD03" },
+    personal: { background: "#253730", titleText: "#92E0C0", timeText: "#74B49A" },
+    projects: { background: "#3E1D00", titleText: "#FB7500", timeText: "#C85D00" },
+    misc: { background: "#3E0F34", titleText: "#FC38D1", timeText: "#CA2DA7" },
+    usHolidays: { background: "#062B3E", titleText: "#1BADF7", timeText: "#FFFFFF" },
+}
+
 
 function getTextWidth(text) {
     const wideCharWidth = 32;
@@ -77,11 +99,7 @@ function splitTextIntoLines(text, maxLineWidth, numLines) {
 
 
 
-async function getCalendarEvents(startDate) {
-    if (!startDate) {
-        const now = new Date();
-        startDate = new Date(now.getTime() - (5 * 60 * 60 * 1000));    // manually minus 5 hours
-    }
+async function getCalendarEvents(startDate = new Date()) {
 
     //  Initialize Google Calendar API
     const auth = await getAuthClient();
@@ -102,7 +120,8 @@ async function getCalendarEvents(startDate) {
     //  Calculate time range
     const lastSunday = startDate;
     lastSunday.setDate(lastSunday.getDate() - lastSunday.getDay());
-    lastSunday.setHours(0, 0, 0, 0);
+    console.log(lastSunday);
+    console.log("");
 
     const twoWeeksLater = new Date();
     twoWeeksLater.setDate(lastSunday.getDate() + 14);
@@ -132,36 +151,18 @@ async function getCalendarEvents(startDate) {
     });
 
     //  Format & return
-    const light_colors_map = {
-        primary: { background: "#EEE5FF", titleText: "#5D4C7F", timeText: "#8A74BF" },
-        noSchool: { background: "#F8F9FA", titleText: "#737474", timeText: "#AAAFAE" },
-        tests: { background: "#FFC8BF", titleText: "#801400", timeText: "#BE1C00" },
-        school: { background: "#FEF5BE", titleText: "#7F6D00", timeText: "#BEA200" },
-        personal: { background: "#E4F6EE", titleText: "#487061", timeText: "#6CA990" },
-        projects: { background: "#FDDBBF", titleText: "#7D3A00", timeText: "#BB5702" },
-        misc: { background: "#FECDF3", titleText: "#7F1C68", timeText: "#BD2A9D" },
-        usHolidays: { background: "#C5EAFD", titleText: "#0D577C", timeText: "#1A82BF" },
-    }
-
-    const dark_colors_map = {
-        primary: { background: "#2F2740", titleText: "#B99AFE", timeText: "#947BCC" },
-        noSchool: { background: "#393A3A", titleText: "#E4E8E7", timeText: "#B6BAB8" },
-        tests: { background: "#460E06", titleText: "#FF401C", timeText: "#E23314" },
-        school: { background: "#3F3600", titleText: "#FED800", timeText: "#CBAD03" },
-        personal: { background: "#253730", titleText: "#92E0C0", timeText: "#74B49A" },
-        projects: { background: "#3E1D00", titleText: "#FB7500", timeText: "#C85D00" },
-        misc: { background: "#3E0F34", titleText: "#FC38D1", timeText: "#CA2DA7" },
-        usHolidays: { background: "#062B3E", titleText: "#1BADF7", timeText: "#FFFFFF" },
-    }
-
     events = events.map(event => {
+        console.log(event.summary);
+        console.log(event.start.dateTime || event.start.date);
         const allDay = !!event.start.date;
 
         let startDate = new Date(event.start.dateTime || event.start.date);
         if (allDay) startDate = new Date(startDate.getTime() + (5 * 60 * 60 * 1000));
+        console.log(startDate);
 
         const diffTime = startDate.getTime() - lastSunday.getTime();
-        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        console.log(diffDays);
 
         //  Calculate start text - either "3 PM" or "3:30 PM" (if minute is 00, omit minutes)
         const startText = event.start.dateTime ? (() => {
@@ -175,6 +176,7 @@ async function getCalendarEvents(startDate) {
             return minutes === 0 ? `${hours} ${ampm}` : `${hours}:${minutesStr} ${ampm}`;
         })() : null;
 
+        console.log("");
         return {
             title: event.summary,
             color: dark_colors_map[Object.keys(calendars).find(key => calendars[key] === event.organizer.email)],
@@ -188,7 +190,7 @@ async function getCalendarEvents(startDate) {
 }
 
 
-// getCalendarEvents();
+getCalendarEvents();
 
 
 module.exports = {

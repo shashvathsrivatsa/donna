@@ -1,4 +1,3 @@
-// getRefreshToken.js (run this once, then delete)
 const fs = require('fs');
 const readline = require('readline');
 const { google } = require('googleapis');

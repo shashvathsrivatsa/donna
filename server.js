@@ -1,7 +1,13 @@
 //  INIT
 require("dotenv").config({ quiet: true });
+
+const { fs } = require("fs");
+const { InferenceClient } = require("@huggingface/inference");
+
 const express = require('express');
 const app = express();
+app.use(express.json());
+
 
 const { get_module_name } = require("./engine/interpreter.js");
 const { chat } = require("./engine/chat.js");
@@ -9,11 +15,10 @@ const { tts } = require("./engine/tts.js");
 
 const { calendar_render } = require("./modules/calendar/calendar_render.js");
 
-const { fs } = require("fs");
-const { InferenceClient } = require("@huggingface/inference");
+const { sendSMS } = require("./utils/sms.js');
 
 
-app.use(express.json());
+
 
 
 //  PING
@@ -22,10 +27,16 @@ app.get('/', (req, res) => {
 });
 
 
-// ===============================  ENGINE  =============================== //
+
+
+
+
+
+
+// ==============================================================  ENGINE  ============================================================== //
 
 //  INTERPRETER
-app.post('/interpreter', async (req, res) => {
+app.post('/engine/interpreter', async (req, res) => {
     try {
         console.log("");
         const query = req.body.query;
@@ -41,7 +52,7 @@ app.post('/interpreter', async (req, res) => {
 
 
 //  CHAT
-app.post('/chat', async (req, res) => {
+app.post('/engine/chat', async (req, res) => {
     try {
         console.log("");
         const query = req.body.query;
@@ -57,7 +68,7 @@ app.post('/chat', async (req, res) => {
 
 
 //  TTS
-app.post('/tts', async (req, res) => {
+app.post('/engine/tts', async (req, res) => {
     try {
         const text = req.body.text;
         const client = new InferenceClient(process.env.HF_TOKEN);
@@ -75,10 +86,15 @@ app.post('/tts', async (req, res) => {
 });
 
 
-// ===============================  MODULES  =============================== //
+
+
+
+
+
+// ==============================================================  MODULES  ============================================================== //
 
 //  CALENDAR RENDER
-app.post('/calendar/render', async (req, res) => {
+app.post('/modules/calendar/render', async (req, res) => {
     try {
         const start = Date.now();
 
@@ -97,6 +113,19 @@ app.post('/calendar/render', async (req, res) => {
     }
 });
 
+
+
+
+
+
+
+// ==============================================================  WEBHOOKS  ============================================================== //
+
+//  CALENDAR UPDATE
+app.post("/webhooks/google-calendar", async (req, res) => {
+    sendSMS("calendar-update");
+    res.status(200).send("OK");
+});
 
 
 //  START

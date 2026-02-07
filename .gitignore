@@ -1,8 +1,15 @@
 .DS_Store
+
+#  private files
 .env
 modules/calendar/credentials.json
 modules/calendar/credentials-web.json
 modules/calendar/token.json
+token.json
+
+#  heavy directories
 node_modules/
 other_fonts/
-token.json
+
+#  other
+output.png

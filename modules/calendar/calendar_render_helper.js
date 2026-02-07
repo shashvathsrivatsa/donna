@@ -149,13 +149,17 @@ async function getCalendarEvents(startDate = new Date()) {
     });
 
     //  Format & return
+
+    //  calendarStart = lastSunday at 11:59 PM
+    const calendarStart = new Date(lastSunday.getFullYear(), lastSunday.getMonth(), lastSunday.getDate(), 23, 59, 0);
+
     events = events.map(event => {
         const allDay = !!event.start.date;
 
         let startDate = new Date(event.start.dateTime || event.start.date);
         if (allDay) startDate = new Date(startDate.getTime() + (5 * 60 * 60 * 1000));
 
-        const diffTime = startDate.getTime() - lastSunday.getTime();
+        const diffTime = startDate.getTime() - calendarStart.getTime();
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
         //  Calculate start text - either "3 PM" or "3:30 PM" (if minute is 00, omit minutes)
@@ -183,7 +187,7 @@ async function getCalendarEvents(startDate = new Date()) {
 }
 
 
-getCalendarEvents();
+// getCalendarEvents();
 
 
 module.exports = {

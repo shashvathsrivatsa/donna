@@ -24,12 +24,15 @@ async function createWatch() {
         requestBody: {
             id: uuidv4(), // unique per channel
             type: "web_hook",
-            address: "https://donna-pm0k.onrender.com/webhook/google-calendar"
+            address: "https://donna-pm0k.onrender.com/webhooks/google-calendar"
         }
     });
 
     console.log("Watch created:", response.data);
 }
 
-createWatch();
+//  display calendar.events.watch()
+con
+
+// createWatch();
 

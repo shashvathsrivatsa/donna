@@ -10,8 +10,9 @@ const transporter = nodemailer.createTransport({
 });
 
 function sendSMS(message) {
+    console.log("Sending SMS: ", message);
     const mailOptions = {
-        from: 'your-email@gmail.com',
+        from: 'shashvaths@gmail.com',
         to: '4086570906@vtext.com',
         subject: '', // Keep empty for cleaner SMS
         text: message

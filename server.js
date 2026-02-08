@@ -1,7 +1,6 @@
 //  INIT
 require("dotenv").config({ quiet: true });
 
-const { fs } = require("fs");
 const { InferenceClient } = require("@huggingface/inference");
 
 const express = require('express');

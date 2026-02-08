@@ -122,8 +122,13 @@ app.post('/modules/calendar/render', async (req, res) => {
 
 //  CALENDAR UPDATE
 app.post("/webhooks/google-calendar", async (req, res) => {
-    sendSMS("calendar-update");
-    res.status(200).send("OK");
+    try {
+        await sendSMS("calendar-update");
+        res.status(200).send("OK");
+    } catch (error) {
+        console.error("Error in /webhooks/google-calendar endpoint:", error);
+        res.status(500).json({ error: 'An error occurred while processing the calendar update webhook.' });
+    }
 });
 
 

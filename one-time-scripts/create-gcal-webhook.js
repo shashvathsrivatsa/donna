@@ -32,7 +32,6 @@ async function createWatch() {
 }
 
 //  display calendar.events.watch()
-con
 
 // createWatch();
 

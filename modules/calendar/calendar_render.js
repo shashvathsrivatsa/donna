@@ -66,7 +66,7 @@ async function calendar_render(events) {
             const todaysEvents = events.filter(event => event.daysFromToday === i);
 
             todaysEvents.forEach((event, index) => {
-                const estimatedWidth = getTextWidth(event.title) + textPadding + 13;  //  buffer to prevent overflow
+                const estimatedWidth = getTextWidth(event.title) + textPadding;  //  buffer to prevent overflow
                 event.numLines = Math.ceil(estimatedWidth / maxLineWidth);
                 event.lines = splitTextIntoLines(event.title, maxLineWidth, event.numLines);
             });

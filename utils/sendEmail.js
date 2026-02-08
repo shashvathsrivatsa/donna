@@ -17,3 +17,6 @@ async function sendEmail(message) {
 
 // sendEmail('Y');
 
+module.exports = {
+    sendEmail,
+};

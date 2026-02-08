@@ -14,7 +14,7 @@ const { tts } = require("./engine/tts.js");
 
 const { calendar_render } = require("./modules/calendar/calendar_render.js");
 
-const { sendSMS } = require("./utils/sms.js");
+const { sendEmail } = require("./utils/sendEmail.js");
 
 
 
@@ -123,7 +123,7 @@ app.post('/modules/calendar/render', async (req, res) => {
 //  CALENDAR UPDATE
 app.post("/webhooks/google-calendar", async (req, res) => {
     try {
-        await sendSMS("calendar-update");
+        await sendEmail("calendar-update");
         res.status(200).send("OK");
     } catch (error) {
         console.error("Error in /webhooks/google-calendar endpoint:", error);

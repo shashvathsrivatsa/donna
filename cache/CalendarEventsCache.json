@@ -1,0 +1,167 @@
+[
+  {
+    "title": "AMAZON ARRIVES",
+    "color": {
+      "background": "#253730",
+      "titleText": "#92E0C0",
+      "timeText": "#74B49A"
+    },
+    "daysFromToday": 1,
+    "allDay": true,
+    "start": null
+  },
+  {
+    "title": "physics quiz 1",
+    "color": {
+      "background": "#460E06",
+      "titleText": "#FF401C",
+      "timeText": "#E23314"
+    },
+    "daysFromToday": 1,
+    "allDay": false,
+    "start": "8 AM"
+  },
+  {
+    "title": "math quiz",
+    "color": {
+      "background": "#460E06",
+      "titleText": "#FF401C",
+      "timeText": "#E23314"
+    },
+    "daysFromToday": 3,
+    "allDay": true,
+    "start": null
+  },
+  {
+    "title": "job fair",
+    "color": {
+      "background": "#3F3600",
+      "titleText": "#FED800",
+      "timeText": "#CBAD03"
+    },
+    "daysFromToday": 3,
+    "allDay": false,
+    "start": "10 AM"
+  },
+  {
+    "title": "phys office hours",
+    "color": {
+      "background": "#3F3600",
+      "titleText": "#FED800",
+      "timeText": "#CBAD03"
+    },
+    "daysFromToday": 3,
+    "allDay": false,
+    "start": "10:10 AM"
+  },
+  {
+    "title": "Valentine’s Day",
+    "color": {
+      "background": "#062B3E",
+      "titleText": "#1BADF7",
+      "timeText": "#FFFFFF"
+    },
+    "daysFromToday": 6,
+    "allDay": true,
+    "start": null
+  },
+  {
+    "title": "Presidents’ Day",
+    "color": {
+      "background": "#062B3E",
+      "titleText": "#1BADF7",
+      "timeText": "#FFFFFF"
+    },
+    "daysFromToday": 8,
+    "allDay": true,
+    "start": null
+  },
+  {
+    "title": "Lunar New Year",
+    "color": {
+      "background": "#062B3E",
+      "titleText": "#1BADF7",
+      "timeText": "#FFFFFF"
+    },
+    "daysFromToday": 9,
+    "allDay": true,
+    "start": null
+  },
+  {
+    "title": "First Night of Ramadan",
+    "color": {
+      "background": "#062B3E",
+      "titleText": "#1BADF7",
+      "timeText": "#FFFFFF"
+    },
+    "daysFromToday": 10,
+    "allDay": true,
+    "start": null
+  },
+  {
+    "title": "Ash Wednesday",
+    "color": {
+      "background": "#062B3E",
+      "titleText": "#1BADF7",
+      "timeText": "#FFFFFF"
+    },
+    "daysFromToday": 10,
+    "allDay": true,
+    "start": null
+  },
+  {
+    "title": "CS 2114 TEST",
+    "color": {
+      "background": "#460E06",
+      "titleText": "#FF401C",
+      "timeText": "#E23314"
+    },
+    "daysFromToday": 10,
+    "allDay": true,
+    "start": null
+  },
+  {
+    "title": "phys office hours",
+    "color": {
+      "background": "#3F3600",
+      "titleText": "#FED800",
+      "timeText": "#CBAD03"
+    },
+    "daysFromToday": 10,
+    "allDay": false,
+    "start": "10:10 AM"
+  },
+  {
+    "title": "cs office hours",
+    "color": {
+      "background": "#3F3600",
+      "titleText": "#FED800",
+      "timeText": "#CBAD03"
+    },
+    "daysFromToday": 10,
+    "allDay": false,
+    "start": "10:45 AM"
+  },
+  {
+    "title": "PHYSICS TEST 1",
+    "color": {
+      "background": "#460E06",
+      "titleText": "#FF401C",
+      "timeText": "#E23314"
+    },
+    "daysFromToday": 12,
+    "allDay": false,
+    "start": "6 PM"
+  },
+  {
+    "title": "alice meeting",
+    "color": {
+      "background": "#3F3600",
+      "titleText": "#FED800",
+      "timeText": "#CBAD03"
+    },
+    "daysFromToday": 13,
+    "allDay": true,
+    "start": null
+  }
+]

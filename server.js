@@ -2,6 +2,8 @@
 require("dotenv").config({ quiet: true });
 
 const { InferenceClient } = require("@huggingface/inference");
+const fs = require('fs');
+const path = require('path');
 
 const express = require('express');
 const app = express();
@@ -13,6 +15,7 @@ const { chat } = require("./engine/chat.js");
 const { tts } = require("./engine/tts.js");
 
 const { calendar_render } = require("./modules/calendar/calendar_render.js");
+const { getCalendarEvents } = require("./modules/calendar/calendar_render_helper.js");
 
 const { sendEmail } = require("./utils/sendEmail.js");
 
@@ -97,8 +100,10 @@ app.post('/modules/calendar/render', async (req, res) => {
     try {
         const start = Date.now();
 
-        const { calendar_render } = require("./modules/calendar/calendar_render.js");
-        const imageBuffer = await calendar_render();
+        const events = await getCalendarEvents();
+        fs.writeFileSync(path.join(__dirname, 'cache', 'CalendarEventsCache.json'), JSON.stringify(events, null, 2));
+
+        const imageBuffer = await calendar_render(events);
 
         const end = Date.now();
         console.log(`Calendar rendered in ${end - start} ms`);
@@ -123,7 +128,24 @@ app.post('/modules/calendar/render', async (req, res) => {
 //  CALENDAR UPDATE
 app.post("/webhooks/google-calendar", async (req, res) => {
     try {
-        await sendEmail();
+        const events = await getCalendarEvents();
+
+        //  get cached events
+        const cachedEventsPath = path.join(__dirname, 'cache', 'CalendarEventsCache.json');
+        let cachedEvents = [];
+        if (fs.existsSync(cachedEventsPath)) {
+            const cachedData = fs.readFileSync(cachedEventsPath);
+            cachedEvents = JSON.parse(cachedData);
+        }
+
+        if (JSON.stringify(events) !== JSON.stringify(cachedEvents)) {
+            fs.writeFileSync(cachedEventsPath, JSON.stringify(events, null, 2));
+            await sendEmail();
+            console.log("Calendar updated - email sent.");
+        } else {
+            console.log("No changes in calendar events.");
+        }
+
         res.status(200).send("OK");
     } catch (error) {
         console.error("Error in /webhooks/google-calendar endpoint:", error);

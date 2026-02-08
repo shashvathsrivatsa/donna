@@ -6,7 +6,7 @@ const { overlayText, overlayCircle, overlayRectangle, buildFinalSVG } = require(
 const { getTextWidth, splitTextIntoLines, getCalendarEvents } = require('./calendar_render_helper.js');
 
 
-async function calendar_render() {
+async function calendar_render(events) {
     try {
         //  Load font resource
         const baseImage = sharp('assets/calendar/skeleton-dark.png');
@@ -31,8 +31,6 @@ async function calendar_render() {
         const step_y = 580;
 
         let svgInnerContent = '';
-
-        const events = await getCalendarEvents();
 
         for (let i = 0; i < dateNumbers.length; i++) {
             const x = start_x + step_x * (i % 7);
@@ -70,7 +68,6 @@ async function calendar_render() {
             todaysEvents.forEach((event, index) => {
                 const estimatedWidth = getTextWidth(event.title) + textPadding + 13;  //  buffer to prevent overflow
                 event.numLines = Math.ceil(estimatedWidth / maxLineWidth);
-                console.log(event.title, event.numLines);
                 event.lines = splitTextIntoLines(event.title, maxLineWidth, event.numLines);
             });
 
@@ -140,15 +137,18 @@ async function calendar_render() {
 
         return await baseImage
             .composite([{ input: Buffer.from(finalSvg), top: 0, left: 0 }])
-            .toFile('output.png');
-            // .toBuffer();
+            // .toFile('output.png');
+            .toBuffer();
 
     } catch (error) {
         console.error('Error generating image:', error);
     }
 }
 
-calendar_render();
+// (async () => {
+//     const events = await getCalendarEvents();
+//     await calendar_render(events);
+// })();
 
 
 

@@ -68,8 +68,9 @@ async function calendar_render() {
             const todaysEvents = events.filter(event => event.daysFromToday === i);
 
             todaysEvents.forEach((event, index) => {
-                const estimatedWidth = getTextWidth(event.title) + textPadding;
+                const estimatedWidth = getTextWidth(event.title) + textPadding + 13;  //  buffer to prevent overflow
                 event.numLines = Math.ceil(estimatedWidth / maxLineWidth);
+                console.log(event.title, event.numLines);
                 event.lines = splitTextIntoLines(event.title, maxLineWidth, event.numLines);
             });
 
@@ -139,15 +140,15 @@ async function calendar_render() {
 
         return await baseImage
             .composite([{ input: Buffer.from(finalSvg), top: 0, left: 0 }])
-            // .toFile('output.png');
-            .toBuffer();
+            .toFile('output.png');
+            // .toBuffer();
 
     } catch (error) {
         console.error('Error generating image:', error);
     }
 }
 
-// calendar_render();
+calendar_render();
 
 
 

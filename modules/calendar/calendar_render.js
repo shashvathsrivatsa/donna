@@ -68,7 +68,6 @@ async function calendar_render(events) {
             todaysEvents.forEach((event, index) => {
                 const estimatedWidth = getTextWidth(event.title) + textPadding + 1;  //  buffer to prevent overflow
                 event.numLines = Math.ceil(estimatedWidth / maxLineWidth);
-                console.log(event.title, event.numLines);
                 event.lines = splitTextIntoLines(event.title, maxLineWidth, event.numLines);
             });
 
@@ -134,7 +133,7 @@ async function calendar_render(events) {
         //  Build final SVG
         const finalSvg = buildFinalSVG(svgInnerContent);
 
-        console.log('Image saved successfully!');
+        console.log('Image generated successfully!');
 
         return await baseImage
             .composite([{ input: Buffer.from(finalSvg), top: 0, left: 0 }])
@@ -146,10 +145,10 @@ async function calendar_render(events) {
     }
 }
 
-(async () => {
-    const events = await getCalendarEvents();
-    await calendar_render(events);
-})();
+// (async () => {
+//     const events = await getCalendarEvents();
+//     await calendar_render(events);
+// })();
 
 
 

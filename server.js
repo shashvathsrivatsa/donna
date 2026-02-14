@@ -141,7 +141,7 @@ app.post("/webhooks/google-calendar", async (req, res) => {
         if (JSON.stringify(events) !== JSON.stringify(cachedEvents)) {
             fs.writeFileSync(cachedEventsPath, JSON.stringify(events, null, 2));
             await sendEmail();
-            console.log("Calendar updated - email sent.");
+            console.log("Webhook:  calendar updated - email sent.");
         } else {
             console.log("No changes in calendar events.");
         }
@@ -152,6 +152,39 @@ app.post("/webhooks/google-calendar", async (req, res) => {
         res.status(500).json({ error: 'An error occurred while processing the calendar update webhook.' });
     }
 });
+
+
+
+
+
+// ==============================================================  AUTOMATIONS  ============================================================== //
+
+//  run every hour and check for calendar updates
+setInterval(async () => {
+    try {
+        const events = await getCalendarEvents();
+
+        //  get cached events
+        const cachedEventsPath = path.join(__dirname, 'cache', 'CalendarEventsCache.json');
+        let cachedEvents = [];
+        if (fs.existsSync(cachedEventsPath)) {
+            const cachedData = fs.readFileSync(cachedEventsPath);
+            cachedEvents = JSON.parse(cachedData);
+        }
+
+        if (JSON.stringify(events) !== JSON.stringify(cachedEvents)) {
+            fs.writeFileSync(cachedEventsPath, JSON.stringify(events, null, 2));
+            await sendEmail();
+            console.log("Automation:  calendar updated - email sent.");
+        } else {
+            console.log("No changes in calendar events.");
+        }
+    } catch (error) {
+        console.error("Error in calendar update automation:", error);
+    }
+}, 60 * 60 * 1000);  // 1 hour interval
+
+
 
 
 

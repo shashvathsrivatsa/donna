@@ -6,7 +6,7 @@ const { overlayText, overlayCircle, overlayRectangle, buildFinalSVG } = require(
 const { getTextWidth, splitTextIntoLines, getCalendarEvents } = require('./calendar_render_helper.js');
 
 
-async function calendar_render(events) {
+async function calendar_render(events, startDate = new Date()) {
     try {
         //  Load font resource
         const baseImage = sharp('assets/calendar/skeleton-dark.png');
@@ -14,12 +14,21 @@ async function calendar_render(events) {
 
         //  Calculate date texts
         const today = new Date();
-        const dayOfWeek = today.getDay();  // 0 (Sun) to 6 (Sat)
-        const prevSunday = today.getDate() - dayOfWeek;
+        let renderingCurrentWeek = true;
+        if (
+            today.getDate() != startDate.getDate() && 
+            today.getMonth() != startDate.getMonth() && 
+            today.getFullYear() != startDate.getFullYear()
+        ) {
+            renderingCurrentWeek = false;
+        }
+
+        const dayOfWeek = startDate.getDay();  // 0 (Sun) to 6 (Sat)
+        const prevSunday = startDate.getDate() - dayOfWeek;
 
         const dateNumbers = [];
         for (let i = 0; i < 14; i++) {
-            const date_i = new Date(today.getFullYear(), today.getMonth(), prevSunday + i);
+            const date_i = new Date(startDate.getFullYear(), startDate.getMonth(), prevSunday + i);
             dateNumbers.push(date_i.getDate().toString());
         }
 
@@ -40,7 +49,9 @@ async function calendar_render(events) {
             const fontWeight = (i === dayOfWeek) ? 700 : 563;
 
             //  Overlay red circle for today
-            if (i === dayOfWeek) {
+            if (
+                i === dayOfWeek
+            ) {
                 svgInnerContent += overlayCircle(x, y);
             }
 

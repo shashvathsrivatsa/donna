@@ -121,7 +121,8 @@ async function getCalendarEvents(startDate = new Date()) {
     const lastSunday = startDate;
     lastSunday.setDate(lastSunday.getDate() - lastSunday.getDay());
 
-    const twoWeeksLater = new Date();
+    //  two weeks after lastSunday
+    const twoWeeksLater = new Date(lastSunday);
     twoWeeksLater.setDate(lastSunday.getDate() + 14);
 
 

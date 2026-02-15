@@ -98,15 +98,11 @@ app.post('/engine/tts', async (req, res) => {
 //  CALENDAR RENDER
 app.post('/modules/calendar/render', async (req, res) => {
     try {
-        const start = Date.now();
-
         const events = await getCalendarEvents();
         fs.writeFileSync(path.join(__dirname, 'cache', 'CalendarEventsCache.json'), JSON.stringify(events, null, 2));
 
         const imageBuffer = await calendar_render(events);
-
-        const end = Date.now();
-        console.log(`Calendar rendered in ${end - start} ms`);
+        console.log(`Calendar rendered successfully!`);
 
         res.setHeader("Content-Type", "image/png");
         res.send(imageBuffer);
@@ -117,6 +113,27 @@ app.post('/modules/calendar/render', async (req, res) => {
     }
 });
 
+
+//  CALENDAR RENDER MORE
+app.post('/modules/calendar/render-more', async (req, res) => {
+    try {
+        const { page } = req.body;
+
+        const startDate = new Date();
+        startDate.setDate(startDate.getDate() + (page - 1) * 14);  //  each page shows 2 weeks
+
+        const events = await getCalendarEvents(startDate);
+        const imageBuffer = await calendar_render(events, startDate);
+        console.log(`Calendar rendered successfully!`);
+
+        res.setHeader("Content-Type", "image/png");
+        res.send(imageBuffer);
+
+    } catch (error) {
+        console.error("Error in /calendar/render endpoint:", error);
+        res.status(500).json({ error: 'An error occurred while rendering the calendar.' });
+    }
+});
 
 
 

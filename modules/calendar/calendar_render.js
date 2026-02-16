@@ -16,8 +16,8 @@ async function calendar_render(events, startDate = new Date()) {
         const today = new Date();
         let renderingCurrentWeek = true;
         if (
-            today.getDate() != startDate.getDate() && 
-            today.getMonth() != startDate.getMonth() && 
+            today.getDate() != startDate.getDate() || 
+            today.getMonth() != startDate.getMonth() || 
             today.getFullYear() != startDate.getFullYear()
         ) {
             renderingCurrentWeek = false;
@@ -49,9 +49,7 @@ async function calendar_render(events, startDate = new Date()) {
             const fontWeight = (i === dayOfWeek) ? 700 : 563;
 
             //  Overlay red circle for today
-            if (
-                i === dayOfWeek
-            ) {
+            if (renderingCurrentWeek && i === dayOfWeek) {
                 svgInnerContent += overlayCircle(x, y);
             }
 

@@ -18,7 +18,7 @@ async function getRefreshToken() {
         prompt: 'consent' // Forces refresh token
     });
 
-    console.log('Authorize here:', authUrl);
+    console.log('Authorize here: \n', authUrl);
 
     const rl = readline.createInterface({
         input: process.stdin,

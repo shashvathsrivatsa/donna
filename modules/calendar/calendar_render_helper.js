@@ -121,26 +121,24 @@ async function getCalendarEvents(startDate = new Date()) {
     const lastSunday = startDate;
     lastSunday.setDate(lastSunday.getDate() - lastSunday.getDay());
 
-    //  two weeks after lastSunday
-    const twoWeeksLater = new Date(lastSunday);
-    twoWeeksLater.setDate(lastSunday.getDate() + 14);
+    //  Four weeks after lastSunday (covers the full 4-week grid)
+    const fourWeeksLater = new Date(lastSunday);
+    fourWeeksLater.setDate(lastSunday.getDate() + 28);
 
-
-    //  Fetch events
-    const calendarRequests = Object.values(calendars).map(calId =>
+    //  Fetch events — tag each item with its calendar key at fetch time
+    const calendarRequests = Object.entries(calendars).map(([name, calId]) =>
         calendar.events.list({
             calendarId: calId,
             timeMin: lastSunday.toISOString(),
-            timeMax: twoWeeksLater.toISOString(),
+            timeMax: fourWeeksLater.toISOString(),
             singleEvents: true,
             orderBy: 'startTime',
-            maxResults: 250,
-        })
+            maxResults: 500,
+        }).then(res => (res.data.items || []).map(item => ({ ...item, _calendarKey: name })))
     );
 
-    const responses = await Promise.all(calendarRequests);
-    let events = responses.flatMap(res => res.data.items || []);
-
+    const eventArrays = await Promise.all(calendarRequests);
+    let events = eventArrays.flat();
 
     //  Sort events by start time
     events.sort((a, b) => {
@@ -149,39 +147,69 @@ async function getCalendarEvents(startDate = new Date()) {
         return dateA - dateB;
     });
 
-    //  Format & return
-
-    //  calendarStart = lastSunday at 11:59 PM
+    //  calendarStart = lastSunday at 11:59 PM (local time)
     const calendarStart = new Date(lastSunday.getFullYear(), lastSunday.getMonth(), lastSunday.getDate(), 23, 59, 0);
 
-    events = events.map(event => {
+    // Parse an all-day date string ("YYYY-MM-DD") as LOCAL noon to avoid UTC shift
+    const parseLocalDate = (dateStr) => {
+        const [y, m, d] = dateStr.split('-').map(Number);
+        return new Date(y, m - 1, d, 12, 0, 0);
+    };
+
+    const diffDaysFrom = (localDate) =>
+        Math.ceil((localDate.getTime() - calendarStart.getTime()) / (1000 * 60 * 60 * 24));
+
+    const calendarKey = (event) =>
+        event._calendarKey ||
+        Object.keys(calendars).find(key => calendars[key] === event.organizer?.email);
+
+    //  Format: expand multi-day all-day events across every day they span
+    events = events.flatMap(event => {
         const allDay = !!event.start.date;
+        const color  = dark_colors_map[calendarKey(event)];
 
-        let startDate = new Date(event.start.dateTime || event.start.date);
-        if (allDay) startDate = new Date(startDate.getTime() + (5 * 60 * 60 * 1000));
+        if (allDay) {
+            const dayStart = parseLocalDate(event.start.date);
+            // end.date is exclusive (Google convention), default to next day
+            const dayEnd   = event.end?.date ? parseLocalDate(event.end.date) : new Date(dayStart.getTime() + 86400000);
 
-        const diffTime = startDate.getTime() - calendarStart.getTime();
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            const spanStart = diffDaysFrom(dayStart);
+            const spanEnd   = diffDaysFrom(dayEnd);  // exclusive
 
-        //  Calculate start text - either "3 PM" or "3:30 PM" (if minute is 00, omit minutes)
-        const startText = event.start.dateTime ? (() => {
-            const dateObj = new Date(event.start.dateTime);
-            let hours = dateObj.getHours();
-            const minutes = dateObj.getMinutes();
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12;
-            hours = hours ? hours : 12; // the hour '0' should be '12'
-            const minutesStr = minutes < 10 ? '0' + minutes : minutes;
-            return minutes === 0 ? `${hours} ${ampm}` : `${hours}:${minutesStr} ${ampm}`;
-        })() : null;
-
-        return {
-            title: event.summary,
-            color: dark_colors_map[Object.keys(calendars).find(key => calendars[key] === event.organizer.email)],
-            daysFromToday: diffDays,
-            allDay: allDay,
-            start: startText,
+            const entries = [];
+            const cursor  = new Date(dayStart);
+            while (cursor < dayEnd) {
+                entries.push({
+                    title: event.summary,
+                    color,
+                    daysFromToday: diffDaysFrom(cursor),
+                    allDay: true,
+                    start: null,
+                    spanStart,
+                    spanEnd,
+                });
+                cursor.setDate(cursor.getDate() + 1);
+            }
+            return entries;
         }
+
+        // Timed event — single entry, no expansion needed
+        const dt = new Date(event.start.dateTime);
+        let hours = dt.getHours();
+        const minutes = dt.getMinutes();
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12 || 12;
+        const startText = minutes === 0
+            ? `${hours} ${ampm}`
+            : `${hours}:${String(minutes).padStart(2, '0')} ${ampm}`;
+
+        return [{
+            title: event.summary,
+            color,
+            daysFromToday: diffDaysFrom(dt),
+            allDay: false,
+            start: startText,
+        }];
     });
 
     return events;

@@ -15,6 +15,7 @@ const { chat } = require("./engine/chat.js");
 const { tts } = require("./engine/tts.js");
 
 const { calendar_render } = require("./modules/calendar/calendar_render.js");
+const { calendar_render_2 } = require("./modules/calendar/calendar_render_2.js");
 const { getCalendarEvents } = require("./modules/calendar/calendar_render_helper.js");
 
 const { sendEmail } = require("./utils/sendEmail.js");
@@ -101,7 +102,7 @@ app.post('/modules/calendar/render', async (req, res) => {
         const events = await getCalendarEvents();
         fs.writeFileSync(path.join(__dirname, 'cache', 'CalendarEventsCache.json'), JSON.stringify(events, null, 2));
 
-        const imageBuffer = await calendar_render(events);
+        const imageBuffer = await calendar_render_2(events);
         console.log(`Calendar rendered successfully!`);
 
         res.setHeader("Content-Type", "image/png");
@@ -176,7 +177,7 @@ app.post("/webhooks/google-calendar", async (req, res) => {
 
 // ==============================================================  AUTOMATIONS  ============================================================== //
 
-//  run every hour and check for calendar updates
+//  run every 5 min and check for calendar updates
 setInterval(async () => {
     try {
         const events = await getCalendarEvents();
@@ -199,7 +200,7 @@ setInterval(async () => {
     } catch (error) {
         console.error("Error in calendar update automation:", error);
     }
-}, 60 * 60 * 1000);  // 1 hour interval
+}, 1000 * 60 * 5);
 
 
 

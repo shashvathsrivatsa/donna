@@ -203,6 +203,22 @@ setInterval(async () => {
 }, 1000 * 60 * 5);
 
 
+//  send email when the day rolls over
+let lastDay = new Date().getDate();
+setInterval(async () => {
+    try {
+        const today = new Date().getDate();
+        if (today !== lastDay) {
+            lastDay = today;
+            await sendEmail();
+            console.log("Automation:  day changed - email sent.");
+        }
+    } catch (error) {
+        console.error("Error in day change automation:", error);
+    }
+}, 1000 * 60);  //  check every minute
+
+
 
 
 

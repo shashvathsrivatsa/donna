@@ -193,10 +193,10 @@ async function getCalendarEvents(startDate = new Date()) {
             return entries;
         }
 
-        // Timed event — single entry, no expansion needed
-        const dt = new Date(event.start.dateTime);
-        let hours = dt.getHours();
-        const minutes = dt.getMinutes();
+        // Timed event — parse time directly from ISO string; Google sends time already in event's local timezone
+        const m = event.start.dateTime.match(/T(\d{2}):(\d{2})/);
+        let hours = parseInt(m[1], 10);
+        const minutes = parseInt(m[2], 10);
         const ampm = hours >= 12 ? 'PM' : 'AM';
         hours = hours % 12 || 12;
         const startText = minutes === 0

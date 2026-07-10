@@ -210,6 +210,9 @@ setInterval(async () => {
         const today = new Date().getDate();
         if (today !== lastDay) {
             lastDay = today;
+            const events = await getCalendarEvents();
+            const cachedEventsPath = path.join(__dirname, 'cache', 'CalendarEventsCache.json');
+            fs.writeFileSync(cachedEventsPath, JSON.stringify(events, null, 2));
             await sendEmail();
             console.log("Automation:  day changed - email sent.");
         }

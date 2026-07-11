@@ -9,6 +9,8 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 
+fs.mkdirSync(path.join(__dirname, 'cache'), { recursive: true });
+
 
 const { get_module_name } = require("./engine/interpreter.js");
 const { chat } = require("./engine/chat.js");

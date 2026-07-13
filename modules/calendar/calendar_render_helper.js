@@ -206,7 +206,7 @@ async function getCalendarEvents(startDate = new Date()) {
         return [{
             title: event.summary,
             color,
-            daysFromToday: diffDaysFrom(dt),
+            daysFromToday: diffDaysFrom(new Date(event.start.dateTime)),
             allDay: false,
             start: startText,
         }];

@@ -1,5 +1,5 @@
 const sharp = require('sharp');
-const { getCalendarEvents } = require('./calendar_render_helper');
+const { getCalendarEvents, getCalendarGrid, ordinalToDateParts } = require('./calendar_render_helper');
 
 const W = 1179;
 const H = 2556;
@@ -81,8 +81,7 @@ function assignLanes(spans) {
 // ── Main render ───────────────────────────────────────────────────────────────
 
 async function calendar_render_2(events, startDate = new Date()) {
-    const today = new Date(startDate);
-    const dow   = today.getDay();
+    const { startOrdinal, dayOfWeek: dow } = getCalendarGrid(startDate);
     const DAY_S = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
     // Deduplicate multi-day spans; keep individual entries for single-day events
@@ -180,8 +179,7 @@ async function calendar_render_2(events, startDate = new Date()) {
         for (let col = 0; col < COLS; col++) {
             const dayIdx  = row * COLS + col;
             const cx      = COL_W * col + COL_W / 2;
-            const d       = new Date(today.getFullYear(), today.getMonth(), today.getDate() - dow + dayIdx);
-            const dn      = d.getDate();
+            const dn      = ordinalToDateParts(startOrdinal + dayIdx).day;
             const isToday = dayIdx === dow;
             const isPast  = dayIdx < dow;
             const isWknd  = col === 0 || col === 6;

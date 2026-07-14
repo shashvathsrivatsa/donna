@@ -8,6 +8,7 @@
     "main": "server.js",
     "scripts": {
         "build": "npm install",
+        "test": "node --test",
         "start": "node server.js"
     },
     "dependencies": {

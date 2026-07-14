@@ -1,6 +1,105 @@
 const { google } = require('googleapis');
 const { getAuthClient } = require('./google_auth');
 
+const CALENDAR_TIME_ZONE = process.env.CALENDAR_TIME_ZONE || 'America/Los_Angeles';
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+const calendarDateFormatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: CALENDAR_TIME_ZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+});
+
+const calendarTimeFormatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: CALENDAR_TIME_ZONE,
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+});
+
+const calendarDateTimeFormatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: CALENDAR_TIME_ZONE,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hourCycle: 'h23',
+});
+
+function datePartsInCalendarTimeZone(date) {
+    const parts = Object.fromEntries(
+        calendarDateFormatter.formatToParts(date)
+            .filter(part => part.type !== 'literal')
+            .map(part => [part.type, Number(part.value)])
+    );
+    return { year: parts.year, month: parts.month, day: parts.day };
+}
+
+function datePartsToOrdinal({ year, month, day }) {
+    return Math.floor(Date.UTC(year, month - 1, day) / DAY_MS);
+}
+
+function dateStringToOrdinal(dateString) {
+    const [year, month, day] = dateString.split('-').map(Number);
+    return datePartsToOrdinal({ year, month, day });
+}
+
+function ordinalToDateParts(ordinal) {
+    const date = new Date(ordinal * DAY_MS);
+    return {
+        year: date.getUTCFullYear(),
+        month: date.getUTCMonth() + 1,
+        day: date.getUTCDate(),
+    };
+}
+
+function getCalendarGrid(startDate = new Date()) {
+    const current = datePartsInCalendarTimeZone(new Date(startDate));
+    const currentOrdinal = datePartsToOrdinal(current);
+    const dayOfWeek = new Date(currentOrdinal * DAY_MS).getUTCDay();
+    return {
+        currentOrdinal,
+        dayOfWeek,
+        startOrdinal: currentOrdinal - dayOfWeek,
+    };
+}
+
+function getEventDayIndex(dateTime, startDate = new Date()) {
+    const eventOrdinal = datePartsToOrdinal(datePartsInCalendarTimeZone(new Date(dateTime)));
+    return eventOrdinal - getCalendarGrid(startDate).startOrdinal;
+}
+
+function formatEventTime(dateTime) {
+    return calendarTimeFormatter.format(new Date(dateTime)).replace(':00 ', ' ');
+}
+
+// Convert a calendar-local midnight to an instant without depending on the
+// machine's timezone. A second pass handles a DST offset change near the guess.
+function calendarMidnightToDate({ year, month, day }) {
+    const guess = Date.UTC(year, month - 1, day);
+    const getOffset = (instant) => {
+        const parts = Object.fromEntries(
+            calendarDateTimeFormatter.formatToParts(new Date(instant))
+                .filter(part => part.type !== 'literal')
+                .map(part => [part.type, Number(part.value)])
+        );
+        return Date.UTC(
+            parts.year,
+            parts.month - 1,
+            parts.day,
+            parts.hour,
+            parts.minute,
+            parts.second
+        ) - instant;
+    };
+    let instant = guess - getOffset(guess);
+    instant = guess - getOffset(instant);
+    return new Date(instant);
+}
+
 const light_colors_map = {
     primary: { background: "#EEE5FF", titleText: "#5D4C7F", timeText: "#8A74BF" },
     noSchool: { background: "#F8F9FA", titleText: "#737474", timeText: "#AAAFAE" },
@@ -118,12 +217,9 @@ async function getCalendarEvents(startDate = new Date()) {
 
 
     //  Calculate time range
-    const lastSunday = startDate;
-    lastSunday.setDate(lastSunday.getDate() - lastSunday.getDay());
-
-    //  Four weeks after lastSunday (covers the full 4-week grid)
-    const fourWeeksLater = new Date(lastSunday);
-    fourWeeksLater.setDate(lastSunday.getDate() + 28);
+    const { startOrdinal } = getCalendarGrid(startDate);
+    const lastSunday = calendarMidnightToDate(ordinalToDateParts(startOrdinal));
+    const fourWeeksLater = calendarMidnightToDate(ordinalToDateParts(startOrdinal + 28));
 
     //  Fetch events — tag each item with its calendar key at fetch time
     const calendarRequests = Object.entries(calendars).map(([name, calId]) =>
@@ -131,6 +227,7 @@ async function getCalendarEvents(startDate = new Date()) {
             calendarId: calId,
             timeMin: lastSunday.toISOString(),
             timeMax: fourWeeksLater.toISOString(),
+            timeZone: CALENDAR_TIME_ZONE,
             singleEvents: true,
             orderBy: 'startTime',
             maxResults: 500,
@@ -147,18 +244,6 @@ async function getCalendarEvents(startDate = new Date()) {
         return dateA - dateB;
     });
 
-    //  calendarStart = lastSunday at 11:59 PM (local time)
-    const calendarStart = new Date(lastSunday.getFullYear(), lastSunday.getMonth(), lastSunday.getDate(), 23, 59, 0);
-
-    // Parse an all-day date string ("YYYY-MM-DD") as LOCAL noon to avoid UTC shift
-    const parseLocalDate = (dateStr) => {
-        const [y, m, d] = dateStr.split('-').map(Number);
-        return new Date(y, m - 1, d, 12, 0, 0);
-    };
-
-    const diffDaysFrom = (localDate) =>
-        Math.ceil((localDate.getTime() - calendarStart.getTime()) / (1000 * 60 * 60 * 24));
-
     const calendarKey = (event) =>
         event._calendarKey ||
         Object.keys(calendars).find(key => calendars[key] === event.organizer?.email);
@@ -169,44 +254,36 @@ async function getCalendarEvents(startDate = new Date()) {
         const color  = dark_colors_map[calendarKey(event)];
 
         if (allDay) {
-            const dayStart = parseLocalDate(event.start.date);
+            const dayStart = dateStringToOrdinal(event.start.date);
             // end.date is exclusive (Google convention), default to next day
-            const dayEnd   = event.end?.date ? parseLocalDate(event.end.date) : new Date(dayStart.getTime() + 86400000);
+            const dayEnd = event.end?.date ? dateStringToOrdinal(event.end.date) : dayStart + 1;
 
-            const spanStart = diffDaysFrom(dayStart);
-            const spanEnd   = diffDaysFrom(dayEnd);  // exclusive
+            const spanStart = dayStart - startOrdinal;
+            const spanEnd = dayEnd - startOrdinal;  // exclusive
 
             const entries = [];
-            const cursor  = new Date(dayStart);
+            let cursor = dayStart;
             while (cursor < dayEnd) {
                 entries.push({
                     title: event.summary,
                     color,
-                    daysFromToday: diffDaysFrom(cursor),
+                    daysFromToday: cursor - startOrdinal,
                     allDay: true,
                     start: null,
                     spanStart,
                     spanEnd,
                 });
-                cursor.setDate(cursor.getDate() + 1);
+                cursor += 1;
             }
             return entries;
         }
 
-        // Timed event — parse time directly from ISO string; Google sends time already in event's local timezone
-        const m = event.start.dateTime.match(/T(\d{2}):(\d{2})/);
-        let hours = parseInt(m[1], 10);
-        const minutes = parseInt(m[2], 10);
-        const ampm = hours >= 12 ? 'PM' : 'AM';
-        hours = hours % 12 || 12;
-        const startText = minutes === 0
-            ? `${hours} ${ampm}`
-            : `${hours}:${String(minutes).padStart(2, '0')} ${ampm}`;
+        const startText = formatEventTime(event.start.dateTime);
 
         return [{
             title: event.summary,
             color,
-            daysFromToday: diffDaysFrom(new Date(event.start.dateTime)),
+            daysFromToday: getEventDayIndex(event.start.dateTime, startDate),
             allDay: false,
             start: startText,
         }];
@@ -220,6 +297,12 @@ async function getCalendarEvents(startDate = new Date()) {
 
 
 module.exports = {
+    CALENDAR_TIME_ZONE,
+    datePartsInCalendarTimeZone,
+    formatEventTime,
+    getCalendarGrid,
+    getEventDayIndex,
+    ordinalToDateParts,
     getTextWidth,
     splitTextIntoLines,
     getCalendarEvents,

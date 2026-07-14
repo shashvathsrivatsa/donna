@@ -3,7 +3,7 @@ const path = require('path');
 const sharp = require('sharp');
 
 const { overlayText, overlayCircle, overlayRectangle, buildFinalSVG } = require('../../utils/graphics.js');
-const { getTextWidth, splitTextIntoLines, getCalendarEvents } = require('./calendar_render_helper.js');
+const { getTextWidth, splitTextIntoLines, getCalendarEvents, getCalendarGrid, ordinalToDateParts } = require('./calendar_render_helper.js');
 
 
 async function calendar_render(events, startDate = new Date()) {
@@ -13,23 +13,13 @@ async function calendar_render(events, startDate = new Date()) {
 
 
         //  Calculate date texts
-        const today = new Date();
-        let renderingCurrentWeek = true;
-        if (
-            today.getDate() != startDate.getDate() || 
-            today.getMonth() != startDate.getMonth() || 
-            today.getFullYear() != startDate.getFullYear()
-        ) {
-            renderingCurrentWeek = false;
-        }
-
-        const dayOfWeek = startDate.getDay();  // 0 (Sun) to 6 (Sat)
-        const prevSunday = startDate.getDate() - dayOfWeek;
+        const nowGrid = getCalendarGrid();
+        const { currentOrdinal, startOrdinal, dayOfWeek } = getCalendarGrid(startDate);
+        const renderingCurrentWeek = currentOrdinal === nowGrid.currentOrdinal;
 
         const dateNumbers = [];
         for (let i = 0; i < 14; i++) {
-            const date_i = new Date(startDate.getFullYear(), startDate.getMonth(), prevSunday + i);
-            dateNumbers.push(date_i.getDate().toString());
+            dateNumbers.push(ordinalToDateParts(startOrdinal + i).day.toString());
         }
 
 

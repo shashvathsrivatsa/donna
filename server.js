@@ -181,7 +181,7 @@ app.post("/webhooks/google-calendar", async (req, res) => {
 
 // ==============================================================  AUTOMATIONS  ============================================================== //
 
-//  run every 5 min and check for calendar updates
+//  run every 1 min and check for calendar updates
 setInterval(async () => {
     try {
         const events = await getCalendarEvents();
@@ -204,7 +204,7 @@ setInterval(async () => {
     } catch (error) {
         console.error("Error in calendar update automation:", error);
     }
-}, 1000 * 60 * 5);
+}, 1000 * 60 * 1);
 
 
 //  send email when the day rolls over

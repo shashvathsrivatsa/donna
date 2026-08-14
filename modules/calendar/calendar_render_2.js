@@ -49,10 +49,15 @@ function wrapTitle(title, pillWidthPx) {
         i++;
     }
     if (!line1) {
-        return [title.substring(0, maxChars - 1) + '-', title.substring(maxChars - 1)];
+        // single word longer than maxChars — hard truncate line1, put rest on line2
+        line1 = title.substring(0, maxChars - 1) + '-';
+        i = 0; // remaining handled below as line2
     }
-    const line2 = words.slice(i).join(' ');
-    return line2 ? [line1, line2] : [line1];
+    if (i >= words.length) return [line1];
+    // Build line2, truncate with ellipsis if it doesn't fit
+    let line2 = words.slice(i).join(' ');
+    if (line2.length > maxChars) line2 = line2.substring(0, maxChars - 1) + '…';
+    return [line1, line2];
 }
 
 // Greedy lane assignment: pack non-overlapping spans into the same lane.
@@ -257,7 +262,7 @@ async function calendar_render_2(events, startDate = new Date()) {
 
 // (async () => {
 //     const events = await getCalendarEvents();
-//     const buf = await calendar_render(events);
+//     const buf = await calendar_render_2(events);
 //     require('fs').writeFileSync('calendar_2_output.png', buf);
 //     console.log('Done → calendar_2_output.png');
 // })();

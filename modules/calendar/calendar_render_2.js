@@ -198,7 +198,7 @@ async function calendar_render_2(events, startDate = new Date()) {
             s += T(dn, cx, numY, 36, isToday ? 700 : 400, numColor, 'middle');
             if (isToday) s += R(cx - 10, numY + 30, 20, 3, '#FF3B30', 2);
 
-            if (isPast || dayIdx > 27) continue;
+            if (dayIdx > 27) continue;
 
             const dayEvts = singleDayEvents.filter(e => e.daysFromToday === dayIdx);
             if (dayEvts.length === 0) continue;

@@ -2,9 +2,9 @@
 
 # private files
 .env
-modules/calendar/credentials.json
-modules/calendar/credentials-web.json
-modules/calendar/token.json
+modules/gcal/credentials.json
+modules/gcal/credentials-web.json
+modules/gcal/token.json
 token.json
 
 # heavy directories

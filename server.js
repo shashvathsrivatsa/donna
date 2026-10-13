@@ -18,26 +18,17 @@ const { get_module_name } = require("./engine/interpreter.js");
 const { chat } = require("./engine/chat.js");
 const { tts } = require("./engine/tts.js");
 
-const { calendar_render } = require("./modules/calendar/calendar_render.js");
-const { calendar_render_2 } = require("./modules/calendar/calendar_render_2.js");
-const { getCalendarEvents } = require("./modules/calendar/calendar_render_helper.js");
+const { calendar_render } = require("./modules/gcal/calendar_render.js");
+const { calendar_render_2 } = require("./modules/gcal/calendar_render_2.js");
+const { getCalendarEvents } = require("./modules/gcal/calendar_render_helper.js");
 
 const { sendEmail } = require("./utils/sendEmail.js");
-
-
-
 
 
 //  PING
 app.get('/', (req, res) => {
     res.status(200).send("Server is on");
 });
-
-
-
-
-
-
 
 
 // ==============================================================  ENGINE  ============================================================== //
@@ -93,11 +84,6 @@ app.post('/engine/tts', async (req, res) => {
 });
 
 
-
-
-
-
-
 // ==============================================================  MODULES  ============================================================== //
 
 //  CALENDAR RENDER
@@ -141,10 +127,6 @@ app.post('/modules/calendar/render-more', async (req, res) => {
 });
 
 
-
-
-
-
 // ==============================================================  WEBHOOKS  ============================================================== //
 
 //  CALENDAR UPDATE
@@ -174,9 +156,6 @@ app.post("/webhooks/google-calendar", async (req, res) => {
         res.status(500).json({ error: 'An error occurred while processing the calendar update webhook.' });
     }
 });
-
-
-
 
 
 // ==============================================================  AUTOMATIONS  ============================================================== //
@@ -225,13 +204,6 @@ setInterval(async () => {
         console.error("Error in day change automation:", error);
     }
 }, 1000 * 60);  //  check every minute
-
-
-
-
-
-
-
 
 
 //  START

@@ -1,19 +1,20 @@
+# bs
 .DS_Store
+other_fonts/
 
-# private files
+# private
 .env
 modules/gcal/credentials.json
 modules/gcal/credentials-web.json
 modules/gcal/token.json
 token.json
 
-# heavy directories
+# dependencies
 node_modules/
-other_fonts/
 
 # cache
 cache
 
-#  other
-output.png
+# outputs
+*.png
 

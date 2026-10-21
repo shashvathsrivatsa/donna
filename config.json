@@ -1,0 +1,17 @@
+{
+    "timezone": "EST",
+    "_timezone_options": {
+        "PST": "America/Los_Angeles",
+        "MST": "America/Denver",
+        "CST": "America/Chicago",
+        "EST": "America/New_York",
+        "AST": "America/Halifax",
+        "GMT": "Europe/London",
+        "CET": "Europe/Paris",
+        "EET": "Europe/Helsinki",
+        "IST": "Asia/Kolkata",
+        "CST_CHINA": "Asia/Shanghai",
+        "JST": "Asia/Tokyo",
+        "AEST": "Australia/Sydney"
+    }
+}

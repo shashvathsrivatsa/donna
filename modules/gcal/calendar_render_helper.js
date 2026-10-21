@@ -1,7 +1,7 @@
 const { google } = require('googleapis');
 const { getAuthClient } = require('./google_auth');
 
-const CALENDAR_TIME_ZONE = process.env.CALENDAR_TIME_ZONE || 'America/New_York';
+const { IANA: CALENDAR_TIME_ZONE } = require('../../utils/timezone');
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 const calendarDateFormatter = new Intl.DateTimeFormat('en-US', {

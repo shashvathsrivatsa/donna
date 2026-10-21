@@ -1,5 +1,5 @@
 const path = require('path');
-const config = require(path.join(__dirname, '..', 'config.json'));
+const config = require(path.join(__dirname, '..', 'config', 'timezone.json'));
 
 const ABBR_MAP = config._timezone_options;
 

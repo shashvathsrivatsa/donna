@@ -20,7 +20,7 @@ const { tts } = require("./engine/tts.js");
 
 const { calendar_render } = require("./modules/gcal/calendar_render.js");
 const { calendar_render_2 } = require("./modules/gcal/calendar_render_2.js");
-const { getCalendarEvents } = require("./modules/gcal/calendar_render_helper.js");
+const { getCalendarEvents } = require("./modules/gcal/gcal_api.js");
 
 const { sendEmail } = require("./utils/sendEmail.js");
 

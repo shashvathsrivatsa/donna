@@ -1,5 +1,5 @@
 const sharp = require('sharp');
-const { getCalendarEvents, getCalendarGrid, ordinalToDateParts } = require('./calendar_render_helper');
+const { getCalendarEvents, getCalendarGrid, ordinalToDateParts } = require('./gcal_api');
 
 const W = 1179;
 const H = 2556;

@@ -2,6 +2,7 @@ const { google } = require('googleapis');
 const { getAuthClient } = require('./google_auth');
 
 const { IANA: CALENDAR_TIME_ZONE } = require('../../utils/timezone');
+const { calendars: CALENDARS } = require('../../config/calendar.json');
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 const calendarDateFormatter = new Intl.DateTimeFormat('en-US', {
@@ -100,27 +101,6 @@ function calendarMidnightToDate({ year, month, day }) {
     return new Date(instant);
 }
 
-const light_colors_map = {
-    primary: { background: "#EEE5FF", titleText: "#5D4C7F", timeText: "#8A74BF" },
-    noSchool: { background: "#F8F9FA", titleText: "#737474", timeText: "#AAAFAE" },
-    tests: { background: "#FFC8BF", titleText: "#801400", timeText: "#BE1C00" },
-    school: { background: "#FEF5BE", titleText: "#7F6D00", timeText: "#BEA200" },
-    personal: { background: "#E4F6EE", titleText: "#487061", timeText: "#6CA990" },
-    projects: { background: "#FDDBBF", titleText: "#7D3A00", timeText: "#BB5702" },
-    misc: { background: "#FECDF3", titleText: "#7F1C68", timeText: "#BD2A9D" },
-    usHolidays: { background: "#C5EAFD", titleText: "#0D577C", timeText: "#1A82BF" },
-}
-
-const dark_colors_map = {
-    primary: { background: "#2F2740", titleText: "#B99AFE", timeText: "#947BCC" },
-    noSchool: { background: "#393A3A", titleText: "#E4E8E7", timeText: "#B6BAB8" },
-    tests: { background: "#460E06", titleText: "#FF401C", timeText: "#E23314" },
-    school: { background: "#3F3600", titleText: "#FED800", timeText: "#CBAD03" },
-    personal: { background: "#253730", titleText: "#92E0C0", timeText: "#74B49A" },
-    projects: { background: "#3E1D00", titleText: "#FB7500", timeText: "#C85D00" },
-    misc: { background: "#3E0F34", titleText: "#FC38D1", timeText: "#CA2DA7" },
-    usHolidays: { background: "#062B3E", titleText: "#1BADF7", timeText: "#FFFFFF" },
-}
 
 
 function getTextWidth(text) {
@@ -204,27 +184,15 @@ async function getCalendarEvents(startDate = new Date()) {
     const auth = await getAuthClient();
     const calendar = google.calendar({ version: 'v3', auth });
 
-    const calendars = {
-        usHolidays: "6lqpbv8647igscie1ictda2c57nigmcn@import.calendar.google.com",
-        noSchool: "7cbee8ced370d19e708df09375de71a002c35f5e3699c0dd92e8c9ddd4be8a94@group.calendar.google.com",
-        primary: "shashvaths@gmail.com",
-        tests: "mg4duct3mt76nk62ck4gi0mof0@group.calendar.google.com",
-        school: "7i5hfg2oa2du7s2s31v558qtno@group.calendar.google.com",
-        personal: "9e47nm9itkfkenuok05l9h329k@group.calendar.google.com",
-        projects: "faef4cc31f36673614361df2ff52ebdbd3804940196f6b371a08441380fe29ec@group.calendar.google.com",
-        misc: "s6pnfbbf3nungnbj5il2ra7teo@group.calendar.google.com",
-    };
-
-
     //  Calculate time range
     const { startOrdinal } = getCalendarGrid(startDate);
     const lastSunday = calendarMidnightToDate(ordinalToDateParts(startOrdinal));
     const fourWeeksLater = calendarMidnightToDate(ordinalToDateParts(startOrdinal + 28));
 
     //  Fetch events — tag each item with its calendar key at fetch time
-    const calendarRequests = Object.entries(calendars).map(([name, calId]) =>
+    const calendarRequests = Object.entries(CALENDARS).map(([name, entry]) =>
         calendar.events.list({
-            calendarId: calId,
+            calendarId: entry.id,
             timeMin: lastSunday.toISOString(),
             timeMax: fourWeeksLater.toISOString(),
             timeZone: CALENDAR_TIME_ZONE,
@@ -246,12 +214,13 @@ async function getCalendarEvents(startDate = new Date()) {
 
     const calendarKey = (event) =>
         event._calendarKey ||
-        Object.keys(calendars).find(key => calendars[key] === event.organizer?.email);
+        Object.keys(CALENDARS).find(key => CALENDARS[key].id === event.organizer?.email);
 
     //  Format: expand multi-day all-day events across every day they span
     events = events.flatMap(event => {
         const allDay = !!event.start.date;
-        const color  = dark_colors_map[calendarKey(event)];
+        const key = calendarKey(event);
+        const color = CALENDARS[key]?.dark;
 
         if (allDay) {
             const dayStart = dateStringToOrdinal(event.start.date);

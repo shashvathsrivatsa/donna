@@ -1,0 +1,44 @@
+{
+    "calendars": {
+        "primary": {
+            "id": "shashvaths@gmail.com",
+            "light": { "background": "#EEE5FF", "titleText": "#5D4C7F", "timeText": "#8A74BF" },
+            "dark":  { "background": "#2F2740", "titleText": "#B99AFE", "timeText": "#947BCC" }
+        },
+        "noSchool": {
+            "id": "7cbee8ced370d19e708df09375de71a002c35f5e3699c0dd92e8c9ddd4be8a94@group.calendar.google.com",
+            "light": { "background": "#F8F9FA", "titleText": "#737474", "timeText": "#AAAFAE" },
+            "dark":  { "background": "#393A3A", "titleText": "#E4E8E7", "timeText": "#B6BAB8" }
+        },
+        "tests": {
+            "id": "mg4duct3mt76nk62ck4gi0mof0@group.calendar.google.com",
+            "light": { "background": "#FFC8BF", "titleText": "#801400", "timeText": "#BE1C00" },
+            "dark":  { "background": "#460E06", "titleText": "#FF401C", "timeText": "#E23314" }
+        },
+        "school": {
+            "id": "7i5hfg2oa2du7s2s31v558qtno@group.calendar.google.com",
+            "light": { "background": "#FEF5BE", "titleText": "#7F6D00", "timeText": "#BEA200" },
+            "dark":  { "background": "#3F3600", "titleText": "#FED800", "timeText": "#CBAD03" }
+        },
+        "personal": {
+            "id": "9e47nm9itkfkenuok05l9h329k@group.calendar.google.com",
+            "light": { "background": "#E4F6EE", "titleText": "#487061", "timeText": "#6CA990" },
+            "dark":  { "background": "#253730", "titleText": "#92E0C0", "timeText": "#74B49A" }
+        },
+        "extracurricular": {
+            "id": "faef4cc31f36673614361df2ff52ebdbd3804940196f6b371a08441380fe29ec@group.calendar.google.com",
+            "light": { "background": "#FDDBBF", "titleText": "#7D3A00", "timeText": "#BB5702" },
+            "dark":  { "background": "#3E1D00", "titleText": "#FB7500", "timeText": "#C85D00" }
+        },
+        "misc": {
+            "id": "s6pnfbbf3nungnbj5il2ra7teo@group.calendar.google.com",
+            "light": { "background": "#FECDF3", "titleText": "#7F1C68", "timeText": "#BD2A9D" },
+            "dark":  { "background": "#3E0F34", "titleText": "#FC38D1", "timeText": "#CA2DA7" }
+        },
+        "usHolidays": {
+            "id": "6lqpbv8647igscie1ictda2c57nigmcn@import.calendar.google.com",
+            "light": { "background": "#C5EAFD", "titleText": "#0D577C", "timeText": "#1A82BF" },
+            "dark":  { "background": "#062B3E", "titleText": "#1BADF7", "timeText": "#FFFFFF" }
+        }
+    }
+}

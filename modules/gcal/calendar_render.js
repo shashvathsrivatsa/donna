@@ -3,7 +3,7 @@ const path = require('path');
 const sharp = require('sharp');
 
 const { overlayText, overlayCircle, overlayRectangle, buildFinalSVG } = require('../../utils/graphics.js');
-const { getTextWidth, splitTextIntoLines, getCalendarEvents, getCalendarGrid, ordinalToDateParts } = require('./calendar_render_helper.js');
+const { getTextWidth, splitTextIntoLines, getCalendarEvents, getCalendarGrid, ordinalToDateParts } = require('./gcal_api.js');
 
 
 async function calendar_render(events, startDate = new Date()) {

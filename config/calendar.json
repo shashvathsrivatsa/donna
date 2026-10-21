@@ -27,13 +27,13 @@
         },
         "extracurricular": {
             "id": "faef4cc31f36673614361df2ff52ebdbd3804940196f6b371a08441380fe29ec@group.calendar.google.com",
-            "light": { "background": "#FDDBBF", "titleText": "#7D3A00", "timeText": "#BB5702" },
-            "dark":  { "background": "#3E1D00", "titleText": "#FB7500", "timeText": "#C85D00" }
+            "light": { "background": "#FECDF3", "titleText": "#7F1C68", "timeText": "#BD2A9D" },
+            "dark":  { "background": "#3E0F34", "titleText": "#FC38D1", "timeText": "#CA2DA7" }
         },
         "misc": {
             "id": "s6pnfbbf3nungnbj5il2ra7teo@group.calendar.google.com",
-            "light": { "background": "#FECDF3", "titleText": "#7F1C68", "timeText": "#BD2A9D" },
-            "dark":  { "background": "#3E0F34", "titleText": "#FC38D1", "timeText": "#CA2DA7" }
+            "light": { "background": "#FDDBBF", "titleText": "#7D3A00", "timeText": "#BB5702" },
+            "dark":  { "background": "#3E1D00", "titleText": "#FB7500", "timeText": "#C85D00" }
         },
         "usHolidays": {
             "id": "6lqpbv8647igscie1ictda2c57nigmcn@import.calendar.google.com",

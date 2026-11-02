@@ -1,7 +1,7 @@
 //  INIT
 require("dotenv").config({ quiet: true });
 
-const { getUTCOffsetHours } = require('./utils/timezone');
+const { getLocalDate } = require('./utils/timezone');
 
 const { InferenceClient } = require("@huggingface/inference");
 const fs = require('fs');
@@ -187,11 +187,10 @@ setInterval(async () => {
 
 
 //  send email when the day rolls over
-const localDate = () => new Date(Date.now() + getUTCOffsetHours() * 3600 * 1000).getUTCDate();
-let lastDay = localDate();
+let lastDay = getLocalDate();
 setInterval(async () => {
     try {
-        const today = localDate();
+        const today = getLocalDate();
         if (today !== lastDay) {
             lastDay = today;
             const events = await getCalendarEvents();
